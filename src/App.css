@@ -1,0 +1,196 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0f0d16;
+  color: white;
+}
+
+.app {
+  min-height: 100vh;
+}
+
+.header {
+  text-align: center;
+  padding: 30px 20px 10px;
+}
+
+.logo {
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.header p {
+  color: #aaa4b8;
+  margin-top: 8px;
+}
+
+.container {
+  width: 90%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 30px 0 60px;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.hero h1 {
+  font-size: 40px;
+  margin-bottom: 15px;
+}
+
+.hero p {
+  color: #b8b2c4;
+  font-size: 17px;
+  line-height: 1.6;
+}
+
+.form-card {
+  background: #181520;
+  border: 1px solid #2d2838;
+  border-radius: 18px;
+  padding: 30px;
+  max-width: 600px;
+  margin: 0 auto;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+}
+
+.form-card label {
+  display: block;
+  margin-bottom: 8px;
+  margin-top: 20px;
+  font-weight: bold;
+}
+
+.form-card label:first-child {
+  margin-top: 0;
+}
+
+select,
+input {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid #444451;
+  border-radius: 10px;
+  background: #111018;
+  color: white;
+  font-size: 16px;
+}
+
+select:focus,
+input:focus {
+  outline: none;
+  border-color: #8b5cf6;
+}
+
+button {
+  width: 100%;
+  margin-top: 30px;
+  padding: 16px;
+  border: none;
+  border-radius: 10px;
+  background: #8b5cf6;
+  color: white;
+  font-size: 17px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+button:hover {
+  background: #7c3aed;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.erro {
+  max-width: 600px;
+  margin: 25px auto;
+  padding: 15px;
+  border-radius: 10px;
+  background: #351b28;
+  color: #ffb4c4;
+  text-align: center;
+}
+
+.resultados {
+  margin-top: 50px;
+}
+
+.resultados h2 {
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.filmes-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.filme-card {
+  background: #181520;
+  border: 1px solid #2d2838;
+  border-radius: 16px;
+  padding: 22px;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.filme-card:hover {
+  transform: translateY(-5px);
+  border-color: #8b5cf6;
+}
+
+.filme-icon {
+  font-size: 35px;
+  margin-bottom: 15px;
+}
+
+.filme-card h3 {
+  font-size: 21px;
+  margin: 0 0 15px;
+}
+
+.filme-info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.filme-info span {
+  background: #272231;
+  padding: 6px 9px;
+  border-radius: 7px;
+  font-size: 13px;
+  color: #d5cdea;
+}
+
+.filme-card p {
+  color: #b8b2c4;
+  line-height: 1.5;
+  margin-bottom: 0;
+}
+
+@media (max-width: 700px) {
+  .hero h1 {
+    font-size: 30px;
+  }
+
+  .filmes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-card {
+    padding: 22px;
+  }
+}
