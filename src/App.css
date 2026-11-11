@@ -1,3 +1,4 @@
+
 * {
   box-sizing: border-box;
 }
@@ -72,8 +73,9 @@ body {
   margin-top: 0;
 }
 
-select,
-input {
+.form-card select,
+.form-card input {
+  display: block;
   width: 100%;
   padding: 14px;
   border: 1px solid #444451;
@@ -83,8 +85,8 @@ input {
   font-size: 16px;
 }
 
-select:focus,
-input:focus {
+.form-card select:focus,
+.form-card input:focus {
   outline: none;
   border-color: #8b5cf6;
 }
@@ -109,6 +111,12 @@ button:hover {
 
 button:disabled {
   opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-card select:disabled,
+.form-card input:disabled {
+  opacity: 0.65;
   cursor: not-allowed;
 }
 
@@ -179,6 +187,46 @@ button:disabled {
   color: #b8b2c4;
   line-height: 1.5;
   margin-bottom: 0;
+}
+
+/* Animação de carregamento do Cinebox */
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  margin: 24px auto;
+  padding: 20px;
+  color: #c9b8e8;
+  text-align: center;
+}
+
+.spinner {
+  font-size: 38px;
+  animation: cinebox-girar 1.5s linear infinite;
+}
+
+.loading p {
+  font-size: 15px;
+  font-weight: 600;
+  margin: 0;
+}
+
+.loading span {
+  font-size: 13px;
+  color: #a99bbd;
+  line-height: 1.5;
+}
+
+@keyframes cinebox-girar {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 @media (max-width: 700px) {

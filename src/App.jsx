@@ -1,4 +1,5 @@
-import { useState } from "react";
+
+import { useRef, useState } from "react";
 import "./App.css";
 
 function App() {
@@ -10,10 +11,20 @@ function App() {
   const [carregando, setCarregando] = useState(false);
   const [erro, setErro] = useState("");
 
-  const buscarFilmes = async () => {
+  const requisicaoAtiva = useRef(false);
+
+  const buscarFilmes = async (e) => {
+    e.preventDefault();
+
+    if (requisicaoAtiva.current) return;
+
+    requisicaoAtiva.current = true;
     setCarregando(true);
     setErro("");
     setFilmes([]);
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 50000);
 
     try {
       const resposta = await fetch("/api/recommend", {
@@ -26,21 +37,53 @@ function App() {
           clima,
           filme,
         }),
+        signal: controller.signal,
       });
 
       const dados = await resposta.json();
 
       if (!resposta.ok) {
-        throw new Error(dados.error || "Erro ao buscar recomendações.");
+        throw new Error(
+          dados.error || "Não foi possível gerar as recomendações."
+        );
+      }
+
+      if (!Array.isArray(dados.filmes) || dados.filmes.length !== 3) {
+        throw new Error("A IA não retornou exatamente três filmes.");
+      }
+
+      const filmesValidos = dados.filmes.every((item) => {
+        return (
+          typeof item.titulo === "string" &&
+          item.titulo.trim() !== "" &&
+          Number.isInteger(item.ano) &&
+          typeof item.genero === "string" &&
+          typeof item.nota === "string" &&
+          typeof item.motivo === "string" &&
+          item.motivo.trim() !== ""
+        );
+      });
+
+      if (!filmesValidos) {
+        throw new Error("Algumas informações dos filmes estão incompletas.");
       }
 
       setFilmes(dados.filmes);
     } catch (error) {
-      console.error(error);
-      setErro(
-        "Não foi possível encontrar os filmes. Verifique a configuração da API."
-      );
+      console.error("Erro no Cinebox:", error);
+
+      if (error.name === "AbortError") {
+        setErro(
+          "A busca demorou mais que o esperado. Tente novamente em instantes."
+        );
+      } else {
+        setErro(
+          error.message || "Não foi possível encontrar os filmes. Tente novamente."
+        );
+      }
     } finally {
+      clearTimeout(timeout);
+      requisicaoAtiva.current = false;
       setCarregando(false);
     }
   };
@@ -62,12 +105,16 @@ function App() {
           </p>
         </section>
 
-        <section className="form-card">
-          <label>Qual gênero você quer assistir?</label>
+        <form className="form-card" onSubmit={buscarFilmes}>
+          <label htmlFor="genero">
+            Qual gênero você quer assistir?
+          </label>
 
           <select
+            id="genero"
             value={genero}
             onChange={(e) => setGenero(e.target.value)}
+            disabled={carregando}
           >
             <option value="">Escolha um gênero</option>
             <option value="Terror">Terror</option>
@@ -80,11 +127,15 @@ function App() {
             <option value="Animação">Animação</option>
           </select>
 
-          <label>Qual clima você procura?</label>
+          <label htmlFor="clima">
+            Qual clima você procura?
+          </label>
 
           <select
+            id="clima"
             value={clima}
             onChange={(e) => setClima(e.target.value)}
+            disabled={carregando}
           >
             <option value="">Escolha um clima</option>
             <option value="Leve e divertido">Leve e divertido</option>
@@ -95,29 +146,50 @@ function App() {
             <option value="Assustador">Assustador</option>
           </select>
 
-          <label>Qual filme você gosta?</label>
+          <label htmlFor="filme">
+            Qual filme você gosta?
+          </label>
 
           <input
+            id="filme"
             type="text"
             value={filme}
             onChange={(e) => setFilme(e.target.value)}
             placeholder="Ex.: Coraline"
+            disabled={carregando}
           />
 
-          <button onClick={buscarFilmes} disabled={carregando}>
-            {carregando ? "🔎 Procurando..." : "🎬 Encontrar filmes"}
+          <button type="submit" disabled={carregando}>
+            {carregando
+              ? "🔎 Procurando..."
+              : "🎬 Encontrar filmes"}
           </button>
-        </section>
+        </form>
 
-        {erro && <p className="erro">{erro}</p>}
+        {carregando && (
+          <div className="loading" role="status" aria-live="polite">
+            <div className="spinner">🎬</div>
+            <p>Preparando sua próxima sessão de cinema...</p>
+            <span>
+              Nossa inteligência artificial está procurando filmes
+              que combinam com você.
+            </span>
+          </div>
+        )}
 
-        {filmes.length > 0 && (
+        {erro && (
+          <p className="erro" role="alert">
+            {erro}
+          </p>
+        )}
+
+        {filmes.length === 3 && !carregando && (
           <section className="resultados">
             <h2>✨ Suas recomendações</h2>
 
             <div className="filmes-grid">
               {filmes.map((item, index) => (
-                <article className="filme-card" key={index}>
+                <article className="filme-card" key={`${item.titulo}-${index}`}>
                   <div className="filme-icon">🎬</div>
 
                   <h3>{item.titulo}</h3>
