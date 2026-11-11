@@ -23,7 +23,7 @@ export default async function handler(req, res) {
     const { genero, clima, filme } = req.body || {};
 
     const response = await client.chat.completions.create({
-      model: "llama-3.3-70b-versatile",
+      model: "openai/gpt-oss-20b",
 
       messages: [
         {
